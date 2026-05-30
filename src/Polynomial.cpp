@@ -32,6 +32,26 @@ void Polynomial::insertSorted(const Monom& m) {
 
 Polynomial::Polynomial() {}
 
+bool Polynomial::operator==(const Polynomial& other) const {
+    if (monoms.size() != other.monoms.size()) return false;
+    
+    auto it1 = monoms.begin();
+    auto it2 = other.monoms.begin();
+    
+    while (it1 != monoms.end() && it2 != other.monoms.end()) {
+        if (it1->getKey() != it2->getKey()) return false;
+        if (it1->getCoeff() != it2->getCoeff()) return false;
+        ++it1;
+        ++it2;
+    }
+    
+    return true;
+}
+
+bool Polynomial::operator!=(const Polynomial& other) const {
+    return !(*this == other);
+}
+
 void Polynomial::addMonom(const Monom& m) {
     insertSorted(m);
 }
@@ -40,19 +60,36 @@ void Polynomial::addMonom(const Monom& m) {
 
 Polynomial Polynomial::parse(const std::string& line) {
     Polynomial result;
-    std::stringstream ss(line);
     std::string token;
+    int sign = 1;
+    bool needMonom = false;
     
-    while (ss >> token) {
-        if (token == "+") continue;
-        if (token == "-") {
-            if (!(ss >> token)) {
-                throw std::invalid_argument("Expected monom after '-'");
+    for (size_t i = 0; i <= line.size(); ++i) {
+        char c = (i < line.size()) ? line[i] : '\0';
+        
+        if (c == '+' || c == '-' || c == '\0') {
+            if (needMonom && token.empty()) {
+                throw std::invalid_argument("Expected monom after sign");
             }
-            Monom m = Monom::parse(token);
-            result.addMonom(Monom(-m.getCoeff(), m.getKey()));
+            
+            if (!token.empty()) {
+                Monom m = Monom::parse(token);
+                result.addMonom(Monom(sign * m.getCoeff(), m.getKey()));
+                token.clear();
+                needMonom = false;
+            }
+            
+            if (c == '+') {
+                sign = 1;
+                needMonom = true;
+            } else if (c == '-') {
+                sign = -1;
+                needMonom = true;
+            }
+        } else if (c == ' ') {
+            continue;
         } else {
-            result.addMonom(Monom::parse(token));
+            token += c;
         }
     }
     

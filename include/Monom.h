@@ -1,5 +1,7 @@
 #pragma once
 
+#include<string>
+
 
 
 class Monom {
@@ -8,6 +10,7 @@ private:
     int key;
 
 public:
+    Monom();
     Monom(double coeff, int deg_x, int deg_y, int deg_z);
     Monom(double coeff, int key);
 

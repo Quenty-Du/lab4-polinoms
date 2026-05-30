@@ -4,7 +4,7 @@
 #include <cctype>
 #include <stdexcept>
 
-
+Monom::Monom() : coeff(0.0), key(0) {}
 
 Monom::Monom(double coeff, int deg_x, int deg_y, int deg_z) : coeff(coeff), key(deg_x * 100 + deg_y * 10 + deg_z) {}
 
@@ -29,10 +29,19 @@ Monom Monom::parse(const std::string& token) {
     
     if (i < token.size() && isdigit(token[i])) {
         coeff = 0;
-        while (i < token.size() && (isdigit(token[i]) || token[i] == '.')) {
+        while (i < token.size() && isdigit(token[i])) {
             coeff = coeff * 10 + (token[i] - '0');
             i++;
             hasDigit = true;
+        }
+        if (i < token.size() && token[i] == '.') {
+            i++;
+            double fraction = 0.1;
+            while (i < token.size() && isdigit(token[i])) {
+                coeff += (token[i] - '0') * fraction;
+                fraction *= 0.1;
+                i++;
+            }
         }
         if (token[0] == '-') coeff = -coeff;
     }

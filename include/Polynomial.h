@@ -14,6 +14,8 @@ private:
 
 public:
     Polynomial();
+    bool operator==(const Polynomial& other) const;
+    bool operator!=(const Polynomial& other) const;
     void addMonom(const Monom& m);
 
     static Polynomial parse(const std::string& line);
