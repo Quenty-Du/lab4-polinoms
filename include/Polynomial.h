@@ -16,6 +16,9 @@ public:
     Polynomial();
     void addMonom(const Monom& m);
 
+    static Polynomial parse(const std::string& line);
+    static Polynomial input(const std::string& name);
+
     static Polynomial add(const Polynomial& a, const Polynomial& b);
     static Polynomial subtract(const Polynomial& a, const Polynomial& b);
     static Polynomial multiplyByConst(const Polynomial& p, double c);

@@ -1,7 +1,9 @@
 #include "../include/Polynomial.h"
+#include "../include/Monom.h"
 
 #include <iostream>
 #include<string>
+#include <sstream>
 #include <stdexcept>
 
 
@@ -32,6 +34,41 @@ Polynomial::Polynomial() {}
 
 void Polynomial::addMonom(const Monom& m) {
     insertSorted(m);
+}
+
+
+
+Polynomial Polynomial::parse(const std::string& line) {
+    Polynomial result;
+    std::stringstream ss(line);
+    std::string token;
+    
+    while (ss >> token) {
+        if (token == "+") continue;
+        if (token == "-") {
+            if (!(ss >> token)) {
+                throw std::invalid_argument("Expected monom after '-'");
+            }
+            Monom m = Monom::parse(token);
+            result.addMonom(Monom(-m.getCoeff(), m.getKey()));
+        } else {
+            result.addMonom(Monom::parse(token));
+        }
+    }
+    
+    return result;
+}
+
+Polynomial Polynomial::input(const std::string& name) {
+    std::string line;
+    std::cout << "Enter " << name << " (example: 3x^2y + 2z - 5): ";
+    std::getline(std::cin, line);
+    try {
+        return Polynomial::parse(line);
+    } catch (const std::invalid_argument& e) {
+        std::cout << "Parse error: " << e.what() << "\n";
+        return Polynomial();
+    }
 }
 
 

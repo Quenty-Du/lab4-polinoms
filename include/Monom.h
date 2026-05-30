@@ -11,6 +11,8 @@ public:
     Monom(double coeff, int deg_x, int deg_y, int deg_z);
     Monom(double coeff, int key);
 
+    static Monom parse(const std::string& token);
+
     double getCoeff() const;
     int getKey() const;
     int getDegX() const;
